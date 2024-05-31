@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+        }
+        input[type="text"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>URL Shortener</h2>
+        <form id="urlForm">
+            <input type="text" id="urlInput" placeholder="Enter URL">
+            <br>
+            <input type="submit" id="button" value="Shorten URL">
+        </form>
+        <div id="shortenedUrl"></div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        document.getElementById("urlForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            shortenUrl();
+        });
+
+
+        function shortenUrl() {
+            var originalUrl = $('#urlInput').val();
+            if (!originalUrl.toLowerCase().includes("http")) {
+                originalUrl = "https://"+originalUrl
+            }
+            $.ajax({
+                url: 'http://127.0.0.1:5000/shorten',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({"url": originalUrl}),
+                success: function(data) {
+                    $("#button").attr("value", "http://127.0.0.1/"+data)
+                    $("#button").click(function(){
+                        window.location = "http://127.0.0.1:5000/"+data
+                    })
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+    }
+    </script>
+</body>
+</html>
